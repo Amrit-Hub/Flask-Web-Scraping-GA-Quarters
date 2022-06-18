@@ -17,52 +17,56 @@ def home():
         unit_list = [unit.text for unit in units.find_all('option')]
         return render_template("home.html", unit_list=unit_list)
 
-def fetchdata(unit, quarter = '-Select-'):
+def fetchdata(unit, quarter = '-Select-', building = '-Select-'):
     with requests.session() as s:
         s.get(html_link)  # load cookies
         soup = BeautifulSoup(s.get(html_link).content, "html.parser")
         data = {
-            "ctl00$ContentPlaceHolder1$ToolkitScriptManager1": "ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$ddlUnit",
-            "__EVENTTARGET": "ctl00$ContentPlaceHolder1$ddlUnit",
+            "ctl00$ContentPlaceHolder1$ToolkitScriptManager1": "",
+            "ctl00_ContentPlaceHolder1_ToolkitScriptManager1_HiddenField": "",  #input
+            "__EVENTTARGET": "",
             "__EVENTARGUMENT": "",
             "__LASTFOCUS": "",
-            "__VIEWSTATE": "",
-            "__VIEWSTATEGENERATOR": "",
-            "__VIEWSTATEENCRYPTED": "",
-            "__EVENTVALIDATION": "",
-            "ctl00$ContentPlaceHolder1$ddlUnit": "",
+            "__VIEWSTATE": "",                                      #input
+            "__VIEWSTATEGENERATOR": "",                             #input
+            "__VIEWSTATEENCRYPTED": "",                             #input
+            "__EVENTVALIDATION": "",                                 #input
         }
-        # print(soup.select("input[value]"))
+        # Get quarters list for unit
+
         for inp in soup.select("input[value]"):
             data[inp["name"]] = inp["value"]
-
         data["ctl00$ContentPlaceHolder1$ddlUnit"] = unit
-        data["ctl00$ContentPlaceHolder1$ToolkitScriptManager1"] = "ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$ddlQrtrType"
-        data["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$ddlQrtrType"
+        data["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$ddlUnit"
+        data["ctl00$ContentPlaceHolder1$ToolkitScriptManager1"] = "ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$ddlUnit"
         soup = BeautifulSoup(s.post(html_link, data=data).content, "html.parser")
 
         quarters = [
             opt["value"]
-            for opt in soup.select("#ctl00_ContentPlaceHolder1_ddlQrtrType option")
-        ]
-        if unit != "-Select-":
+            for opt in soup.select("#ctl00_ContentPlaceHolder1_ddlQrtrType option")]
+        if len(quarters)>0:
             quarters[0] = "-Select-"
-        data["ctl00$ContentPlaceHolder1$ddlQrtrType"] = quarter
+
+        # Get building list for quarter
+        
         for inp in soup.select("input[value]"):
             data[inp["name"]] = inp["value"]
-
+        data["ctl00$ContentPlaceHolder1$ddlQrtrType"] = quarter
+        data["__EVENTTARGET"] = "ctl00$ContentPlaceHolder1$ddlQrtrType"
+        data["ctl00$ContentPlaceHolder1$ToolkitScriptManager1"] = "ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$ddlQrtrType"
         soup = BeautifulSoup(s.post(html_link, data=data).content, "html.parser")
+
         buildings = [
             opt["value"]
-            for opt in soup.select("#ctl00_ContentPlaceHolder1_ddlBldgNo option")
-        ]
-        if quarter != "-Select-":
+            for opt in soup.select("#ctl00_ContentPlaceHolder1_ddlBldgNo option")]
+        if len(buildings)>0:
             buildings[0] = "-Select-"
+
         return (quarters, buildings)
 
-
-@app.route('/<unit>', methods = ["POST", "GET"])
+@app.route('/unit/<path:unit>', methods = ["POST", "GET"])
 def quarter_type(unit):
+    print(unit)
     quarters, buildings = fetchdata(unit)
     quarterArray = []
     for quarter in quarters:
@@ -71,9 +75,10 @@ def quarter_type(unit):
         quarterArray.append(quarterObj)
     return jsonify({"quarters": quarterArray})
 
-@app.route('/<unit>/<quarter>', methods=['GET', 'POST'])
+@app.route('/quarter/<path:unit>/<path:quarter>', methods=['GET', 'POST'])
 def building_no(unit, quarter):
     quarters, buildings = fetchdata(unit, quarter)
+    print(unit, quarter)
     buildingArray = []
     for building in buildings:
         buildingObj = {}
@@ -82,9 +87,13 @@ def building_no(unit, quarter):
     return jsonify({"buildings": buildingArray})
 
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/Search', methods=['GET', 'POST'])
 def searchBuilding():
-    pass
+    if request.method == "POST":
+        unit = request.form["unitStatus"]
+        quarter = request.form["quarterStatus"]
+        building = request.form["buildingStatus"]
+
 
 if __name__ == '__main__':
     app.run(debug=True)

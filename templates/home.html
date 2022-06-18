@@ -34,18 +34,18 @@
     </nav>
     <div class="container my-3">
         <ul class="list-group list-group-horizontal">
-            <select id="unitStatus" class="custom-select my-3 mx-3">
+            <select id="unitStatus" name="unitStatus" class="custom-select my-3 mx-3">
                 {% for unit in unit_list %}
                 <option value="{{unit}}">{{unit}}</option>
                 {% endfor %}
             </select>
-            <select id="quarterStatus" class="custom-select my-3 mx-3">
+            <select id="quarterStatus" name="quarterStatus" class="custom-select my-3 mx-3">
                 <option value="0">-Select-</option>
             </select>
-            <select id="buildingStatus" class="custom-select my-3 mx-3">
+            <select id="buildingStatus" name="buildingStatus" class="custom-select my-3 mx-3">
                 <option value="0">-Select-</option>
             </select>
-            <a role="button" class="btn btn-outline-success my-3" href="/NA">Search</a>
+            <a role="button" class="btn btn-outline-success my-3" href="/Search">Search</a>
         </ul>
 
     </div>
@@ -65,7 +65,7 @@
         let buildingSelect = document.getElementById("buildingStatus");
         unitSelect.onchange = function(){
             unit = unitSelect.value;
-            fetch('/'+unit).then(function(response){
+            fetch('/unit/'+unit).then(function(response){
                 response.json().then(function(data){
                     let optionHTML = '';
                     for (let quarter of data.quarters){
@@ -78,7 +78,7 @@
         quarterSelect.onchange = function(){
             unit = unitSelect.value;
             quarter = quarterSelect.value;
-            fetch('/'+unit+'/'+quarter).then(function(response){
+            fetch('/quarter/'+unit+'/'+quarter).then(function(response){
                 response.json().then(function(data){
                     let optionHTML = '';
                     for (let building of data.buildings){
