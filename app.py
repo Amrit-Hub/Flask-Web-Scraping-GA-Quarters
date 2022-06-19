@@ -77,12 +77,8 @@ def quarter_type(unit):
         quarterObj = {}
         quarterObj["name"] = quarter
         quarterArray.append(quarterObj)
-<<<<<<< HEAD
     # return jsonify({"quarters": quarterArray})
     return jsonify(quarterArray)
-=======
-    return jsonify({"quarters": quarterArray})
->>>>>>> c8f926edc41b46215c093853a38e427a5538752c
 
 
 @app.route('/quarter/<path:unit>/<path:quarter>', methods=['GET', 'POST'])
@@ -94,11 +90,7 @@ def building_no(unit, quarter):
         buildingObj = {}
         buildingObj["name"] = building
         buildingArray.append(buildingObj)
-<<<<<<< HEAD
     return jsonify(buildingArray)
-=======
-    return jsonify({"buildings": buildingArray})
->>>>>>> c8f926edc41b46215c093853a38e427a5538752c
 
 
 @app.route('/Search', methods=['GET', 'POST'])
