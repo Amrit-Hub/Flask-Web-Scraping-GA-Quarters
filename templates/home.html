@@ -32,24 +32,25 @@
             </ul>
         </div>
     </nav>
-    <div class="container my-3">
-        <ul class="list-group list-group-horizontal">
-            <select id="unitStatus" name="unitStatus" class="custom-select my-3 mx-3">
-                {% for unit in unit_list %}
-                <option value="{{unit}}">{{unit}}</option>
-                {% endfor %}
-            </select>
-            <select id="quarterStatus" name="quarterStatus" class="custom-select my-3 mx-3">
-                <option value="0">-Select-</option>
-            </select>
-            <select id="buildingStatus" name="buildingStatus" class="custom-select my-3 mx-3">
-                <option value="0">-Select-</option>
-            </select>
-            <a role="button" class="btn btn-outline-success my-3" href="/Search">Search</a>
-        </ul>
-
-    </div>
-
+    <form method="POST">
+        <div class="container my-3">
+            <ul class="list-group list-group-horizontal">
+                <select id="unitStatus" name="unitStatus" class="custom-select my-3 mx-3">
+                    <option selected="selected" value="0">-Select-</option>
+                    {% for unit in unit_list %}
+                    <option value="{{unit}}">{{unit}}</option>
+                    {% endfor %}
+                </select>
+                <select id="quarterStatus" name="quarterStatus" class="custom-select my-3 mx-3">
+                    <option selected="selected" value="0">-Select-</option>
+                </select>
+                <select id="buildingStatus" name="buildingStatus" class="custom-select my-3 mx-3">
+                    <option selected="selected" value="0">-Select-</option>
+                </select>
+                <a role="button" class="btn btn-outline-success my-3" href="/Search">Search</a>
+            </ul>
+        </div>
+    </form>
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
@@ -63,30 +64,35 @@
         let unitSelect = document.getElementById("unitStatus");
         let quarterSelect = document.getElementById("quarterStatus");
         let buildingSelect = document.getElementById("buildingStatus");
-        unitSelect.onchange = function(){
+        unitSelect.onchange = function () {
             unit = unitSelect.value;
-            fetch('/unit/'+unit).then(function(response){
-                response.json().then(function(data){
-                    let optionHTML = '';
-                    for (let quarter of data.quarters){
-                        optionHTML+= '<option value="'+ quarter.name + '">' + quarter.name + '</option>'
-                    };
-                    quarterSelect.innerHTML = optionHTML; 
+            fetch('/unit/' + unit)
+                .then(function (response) {
+                    response.json()
+                        .then(function (quarters) {
+                            let optionHTML = '';
+                            console.log(quarters)
+                            for (let quarter of quarters) {
+                                optionHTML += '<option value="' + quarter.name + '">' + quarter.name + '</option>'
+                            };
+                            quarterSelect.innerHTML = optionHTML;
+                        });
                 });
-            });
         };
-        quarterSelect.onchange = function(){
+        quarterSelect.onchange = function () {
             unit = unitSelect.value;
             quarter = quarterSelect.value;
-            fetch('/quarter/'+unit+'/'+quarter).then(function(response){
-                response.json().then(function(data){
-                    let optionHTML = '';
-                    for (let building of data.buildings){
-                        optionHTML+= '<option value="'+ building.name + '">' + building.name + '</option>'
-                    };
-                    buildingSelect.innerHTML = optionHTML; 
+            fetch('/quarter/' + unit + '/' + quarter)
+                .then(function (response) {
+                    response.json()
+                        .then(function (buildings) {
+                            let optionHTML = '';
+                            for (let building of buildings) {
+                                optionHTML += '<option value="' + building.name + '">' + building.name + '</option>'
+                            };
+                            buildingSelect.innerHTML = optionHTML;
+                        });
                 });
-            });
         };
     </script>
     <!-- Option 2: Separate Popper and Bootstrap JS -->
