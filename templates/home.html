@@ -69,10 +69,17 @@
             fetch('/unit/' + unit)
                 .then(function (response) {
                     response.json()
+<<<<<<< HEAD
                         .then(function (quarters) {
                             let optionHTML = '';
                             console.log(quarters)
                             for (let quarter of quarters) {
+=======
+                        .then(function (data) {
+                            let optionHTML = '';
+                            console.log(data)
+                            for (let quarter of data.quarters) {
+>>>>>>> c8f926edc41b46215c093853a38e427a5538752c
                                 optionHTML += '<option value="' + quarter.name + '">' + quarter.name + '</option>'
                             };
                             quarterSelect.innerHTML = optionHTML;
@@ -85,9 +92,15 @@
             fetch('/quarter/' + unit + '/' + quarter)
                 .then(function (response) {
                     response.json()
+<<<<<<< HEAD
                         .then(function (buildings) {
                             let optionHTML = '';
                             for (let building of buildings) {
+=======
+                        .then(function (data) {
+                            let optionHTML = '';
+                            for (let building of data.buildings) {
+>>>>>>> c8f926edc41b46215c093853a38e427a5538752c
                                 optionHTML += '<option value="' + building.name + '">' + building.name + '</option>'
                             };
                             buildingSelect.innerHTML = optionHTML;
